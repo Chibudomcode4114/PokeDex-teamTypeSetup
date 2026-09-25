@@ -20,3 +20,17 @@ class PokemonNotFoundError(AppError):
     def __init__(self, pokemon_id: str, game_id: str) -> None:
         message = f"Pokemon '{pokemon_id}' is not found in game '{game_id}'."
         super().__init__(message, status_code=404)
+
+
+class UnsupportedTypeError(AppError):
+    """Raised when an elemental type is unsupported in the current game context."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message, status_code=400)
+
+
+class InvalidTypeMatchupError(AppError):
+    """Raised when an invalid type matchup combination is evaluated."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message, status_code=400)

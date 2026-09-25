@@ -6,6 +6,8 @@ This module is strictly decoupled from frameworks, databases, and network adapte
 from dataclasses import dataclass
 from enum import IntEnum, StrEnum
 
+VALID_DEFENSIVE_MULTIPLIERS: tuple[float, ...] = (0.0, 0.25, 0.5, 1.0, 2.0, 4.0)
+
 
 class PokemonType(StrEnum):
     """Enumeration of all Pokémon elemental types across all generations."""
@@ -89,3 +91,13 @@ class GameRuleProfile:
             except ValueError:
                 return False
         return pokemon_type in self.supported_types
+
+
+@dataclass(frozen=True)
+class TypeMatchupResult:
+    """Calculated defensive type matchup result."""
+
+    attacking_type: PokemonType
+    defending_types: tuple[PokemonType, ...]
+    multiplier: float
+    chart_version: TypeChartVersion
