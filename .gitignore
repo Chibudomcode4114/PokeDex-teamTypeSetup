@@ -1,0 +1,67 @@
+# Environments & Secrets
+.env
+.env.*
+!.env.example
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+
+# Pytest & Tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Node / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Generated Vite config output
+frontend/vite.config.js
+frontend/vite.config.d.ts
