@@ -1,7 +1,7 @@
 # PokeDex TeamTypeMatchup - Technical Implementation Plan
 
-**Document Version:** 1.1.0  
-**Status:** Approved with Revisions / Ready for Milestone Execution  
+**Document Version:** 1.2.0  
+**Status:** In Progress — Milestones 0 & 1 Completed  
 **Source of Truth:** [docs/requirements.md](file:///c:/Users/USER/OneDrive/Pictures/PokeDex%20teamTypeSetup/docs/requirements.md)  
 **Target Delivery:** Minimum Viable Product (MVP)
 
@@ -144,7 +144,7 @@ To satisfy the MVP Acceptance Criterion (*"demonstrate at least one mechanic who
 
 3. **Game Rules Engine (`backend/app/engines/rules_engine.py`)**:
    - Pure domain component decoupled from UI, HTTP, and data-fetching frameworks.
-   - Maps `game_id` $\to$ `ResolvedGameRules` (type chart version, generation, active mechanics, type list).
+   - Maps `game_id` $\to$ `GameRuleProfile` (type chart version, generation, active mechanics, supported types).
 
 4. **Pure Type Matchup Engine (`backend/app/engines/matchup_engine.py`)**:
    - Strictly responsible for **type-vs-type interactions**.
@@ -154,10 +154,13 @@ To satisfy the MVP Acceptance Criterion (*"demonstrate at least one mechanic who
 
 5. **Defensive Modifier Pipeline (`backend/app/engines/modifiers/`)**:
    - Separate, extensible abstraction that adjusts base type multipliers based on non-type factors.
-   - Implements a clear interface:
+   - Implements a clean protocol:
      ```python
      class DefensiveModifier(Protocol):
-         def apply(self, attacking_type: str, base_multiplier: float, context: ModifierContext) -> float: ...
+         @property
+         def name(self) -> str: ...
+         def applies(self, context: ModifierContext) -> bool: ...
+         def apply(self, context: ModifierContext) -> float: ...
      ```
    - Initial MVP modifiers:
      - `LevitateModifier`: Sets Ground multiplier to $0.0\times$.
@@ -264,36 +267,68 @@ gantt
 
 ## 5. Detailed Implementation Tasks
 
-### Milestone 0: Environment Setup & Core Scaffolding
-- [ ] **Task 0.1: Backend Initialization**
+### Milestone 0: Environment Setup & Core Scaffolding [COMPLETED]
+- [x] **Task 0.1: Backend Initialization**
   - Initialize Python virtual environment with `uv` or `poetry`.
   - Install FastAPI, Uvicorn, SQLAlchemy 2.0, Pydantic v2, HTTPX, and Pytest.
   - Setup linting and formatting (`ruff`).
-- [ ] **Task 0.2: Frontend Initialization**
+- [x] **Task 0.2: Frontend Initialization**
   - Scaffold React + TypeScript project with Vite inside `frontend/`.
   - Install TailwindCSS, Lucide-React icons, and TanStack Query (`@tanstack/react-query`).
-- [ ] **Task 0.3: Database Setup**
+- [x] **Task 0.3: Database Setup**
   - Setup SQLite for local development and test reproducibility (PostgreSQL ready via SQLAlchemy URL).
   - Configure Alembic for schema migrations.
 
-### Milestone 1: Pure Type Matchup Engine & Defensive Modifier Pipeline
-- [ ] **Task 1.1: Core Domain Dataclasses**
-  - Create `backend/app/models/domain.py`: `GameRuleProfile`, `TypeChartMatrix`, `TypeMultiplier`, `DefensiveMatchup`.
-- [ ] **Task 1.2: Pure Type Matchup Engine**
-  - Implement `calculate_pure_matchup(attacker_type: str, defender_types: list[str], type_chart: TypeChartMatrix) -> float`.
-  - Zero ability, item, or status dependencies.
-- [ ] **Task 1.3: Defensive Modifier Pipeline & Plugin Architecture**
-  - Define `DefensiveModifier` protocol and `ModifierContext` (holding defender ability, active game rules).
-  - Implement initial ability modifiers:
-    - `LevitateModifier` (Ground immunity).
-    - `FlashFireModifier` (Fire immunity).
-    - `WaterAbsorbModifier` (Water immunity).
-    - `VoltAbsorbModifier` (Electric immunity).
-    - `ThickFatModifier` (50% reduction to Fire/Ice).
-  - Implement `DefensiveModifierPipeline.apply(...)` to chain modifiers after the pure type matchup calculation.
-- [ ] **Task 1.4: Unit Test Suite for Matchup Engine & Modifiers**
-  - Unit tests for pure type interactions (e.g., Metagross vs Dark/Ghost: $0.5\times$ in Gen III vs $1.0\times$ in Gen VI; Charizard vs Rock: $4.0\times$).
-  - Unit tests for modifier application (e.g., Gengar with Levitate vs Ground: $0.0\times$; Snorlax with Thick Fat vs Ice: $0.5\times$).
+### Milestone 1: Pure Type Matchup Engine & Defensive Modifier Pipeline [COMPLETED]
+
+> **Milestone 1 Completion Status:**
+> - **Game Rules Engine** implemented (`backend/app/engines/rules_engine.py`) resolving Gen III (*FireRed / LeafGreen*) and Gen VI (*X / Y*) profiles.
+> - **Gen III and Gen VI type charts** implemented densely in `backend/app/engines/type_chart_data.py` (289 and 324 interactions).
+> - **Type Matchup Engine** implemented (`backend/app/engines/matchup_engine.py`) calculating pure type-vs-type single and dual matchups.
+> - **Defensive Modifier Pipeline** implemented (`backend/app/engines/modifiers/`) supporting *Levitate*, *Flash Fire*, *Water Absorb*, *Volt Absorb*, and *Thick Fat*.
+> - **55 automated tests** currently passing (`pytest -v`).
+> - **Ruff linter** currently passing with 0 warnings/errors (`ruff check .`).
+
+- [x] **Task 1.1: Core Domain Models**
+  - Implemented in `backend/app/models/domain.py`:
+    - `GameRuleProfile`: Container for resolved game rules, supported types, and mechanic flags.
+    - `TypeChartVersion`: Generational type chart versions (`GEN_1`, `GEN_2_TO_5`, `GEN_6_PLUS`).
+    - `PokemonType`: Enum of all 18 elemental types.
+    - `TypeMatchupResult`: Pure type-effectiveness calculation result (`attacking_type`, `defending_types`, `multiplier`, `chart_version`).
+    - `ModifiedMatchupResult`: Defensive evaluation after modifier pipeline (`base_multiplier`, `final_multiplier`, `applied_modifiers`, `ability`, `chart_version`).
+    - `Generation`: IntEnum representing generations (1–9).
+    - `PhysicalSpecialModel`: Damage classification model (`BY_TYPE`, `BY_MOVE`).
+    - `MechanicFlags`: Feature flags (`has_fairy_type`, `steel_resists_dark_ghost`, `physical_special_split`, `has_abilities`).
+    - `VALID_DEFENSIVE_MULTIPLIERS`: Canonical set (0.0, 0.25, 0.5, 1.0, 2.0, 4.0).
+- [x] **Task 1.2: Game Rules Engine & Pure Type Matchup Engine**
+  - Implemented `GameRulesEngine` (`backend/app/engines/rules_engine.py`): Maps `game_id` to `GameRuleProfile` with fail-closed validation for unsupported titles.
+  - Implemented complete generational type matrices (`backend/app/engines/type_chart_data.py`):
+    - `GEN_2_TO_5_MATRIX`: Complete 17-type matrix (289 cells) with Steel resisting Dark/Ghost and no Fairy.
+    - `GEN_6_PLUS_MATRIX`: Complete 18-type matrix (324 cells) with Fairy added and Steel neutral to Dark/Ghost.
+  - Implemented `TypeMatchupEngine` (`backend/app/engines/matchup_engine.py`):
+    - Pure type-vs-type calculation without ability or item logic.
+    - `calculate_single_matchup(attacking_type, defending_type, chart_context)`: Returns 0.0, 0.5, 1.0, 2.0.
+    - `calculate_matchup(attacking_type, defending_types, chart_context)`: Returns single or dual-type combined multiplier (0.0, 0.25, 0.5, 1.0, 2.0, 4.0).
+    - Immediate short-circuit on immunities ($0.0\times$).
+    - Explicit domain error rejection for unsupported types (e.g., Fairy in Gen III).
+- [x] **Task 1.3: Defensive Modifier Pipeline & Ability Modifiers**
+  - Implemented `DefensiveModifier` protocol and `ModifierContext` (`backend/app/engines/modifiers/base.py`).
+  - Implemented 5 MVP ability modifiers (`backend/app/engines/modifiers/ability_modifiers.py`):
+    - `LevitateModifier`: Ground attacks $\to 0.0\times$.
+    - `FlashFireModifier`: Fire attacks $\to 0.0\times$.
+    - `WaterAbsorbModifier`: Water attacks $\to 0.0\times$.
+    - `VoltAbsorbModifier`: Electric attacks $\to 0.0\times$.
+    - `ThickFatModifier`: Fire and Ice damage $\to \text{current} \times 0.5$.
+  - Implemented `DefensiveModifierPipeline` (`backend/app/engines/modifiers/pipeline.py`):
+    - Evaluates modifier chain after pure type effectiveness calculations.
+    - Preserves both `base_multiplier` and `final_multiplier` in `ModifiedMatchupResult`.
+    - Input `TypeMatchupResult` is never mutated.
+    - Unimplemented or absent abilities leave the base multiplier unaltered.
+- [x] **Task 1.4: Unit Test Suite for Rules, Matchup Engine & Modifiers**
+  - `backend/tests/test_rules_engine.py`: 12 unit tests verifying Gen III vs Gen VI profiles, type counts (17 vs 18), Fairy presence/absence, and fail-closed validation.
+  - `backend/tests/test_matchup_engine.py`: 24 unit tests verifying single/dual matchups, immunities, cross-generation differences (Dark/Ghost on Steel, Fairy interactions), and input validation.
+  - `backend/tests/test_modifiers.py`: 17 unit tests verifying all 5 ability modifiers, pipeline chaining, immutability, and GameRuleProfile context gating.
+
 
 ### Milestone 2: PokeAPI Ingestion Adapter & Normalized Database Layer
 - [ ] **Task 2.1: Relational Schema Definition**
