@@ -95,9 +95,27 @@ class GameRuleProfile:
 
 @dataclass(frozen=True)
 class TypeMatchupResult:
-    """Calculated defensive type matchup result."""
+    """Calculated pure type matchup result (without non-type modifiers)."""
 
     attacking_type: PokemonType
     defending_types: tuple[PokemonType, ...]
     multiplier: float
     chart_version: TypeChartVersion
+
+
+@dataclass(frozen=True)
+class ModifiedMatchupResult:
+    """Calculated defensive matchup result after evaluating defensive modifier pipeline."""
+
+    attacking_type: PokemonType
+    defending_types: tuple[PokemonType, ...]
+    base_multiplier: float
+    final_multiplier: float
+    applied_modifiers: tuple[str, ...]
+    ability: str | None
+    chart_version: TypeChartVersion
+
+    @property
+    def was_modified(self) -> bool:
+        """Check whether any defensive modifier altered the base multiplier."""
+        return self.base_multiplier != self.final_multiplier
