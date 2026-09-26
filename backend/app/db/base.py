@@ -1,4 +1,31 @@
-from app.db.session import Base
+"""Central SQLAlchemy model import module for Alembic migration discovery."""
 
-# All SQLAlchemy models will be imported here in Milestone 2 for Alembic metadata tracking
-__all__ = ["Base"]
+from app.db.session import Base
+from app.models.orm import (
+    Ability,
+    BaseStat,
+    ElementType,
+    Game,
+    GamePokemon,
+    GameRuleProfileModel,
+    Generation,
+    Pokemon,
+    PokemonAbilityAssignment,
+    PokemonTypeAssignment,
+    TypeChartEntry,
+)
+
+__all__ = [
+    "Ability",
+    "Base",
+    "BaseStat",
+    "ElementType",
+    "Game",
+    "GamePokemon",
+    "GameRuleProfileModel",
+    "Generation",
+    "Pokemon",
+    "PokemonAbilityAssignment",
+    "PokemonTypeAssignment",
+    "TypeChartEntry",
+]
