@@ -1,0 +1,48 @@
+{
+  "pokemon": {
+    "id": 10001,
+    "name": "deoxys-attack",
+    "is_default": false,
+    "types": [
+      {
+        "slot": 1,
+        "type": { "name": "psychic" }
+      }
+    ],
+    "past_types": [],
+    "abilities": [
+      {
+        "slot": 1,
+        "is_hidden": false,
+        "ability": { "name": "pressure" }
+      }
+    ],
+    "past_abilities": [],
+    "stats": [
+      { "stat": { "name": "hp" }, "base_stat": 50 },
+      { "stat": { "name": "attack" }, "base_stat": 180 },
+      { "stat": { "name": "defense" }, "base_stat": 20 },
+      { "stat": { "name": "special-attack" }, "base_stat": 180 },
+      { "stat": { "name": "special-defense" }, "base_stat": 20 },
+      { "stat": { "name": "speed" }, "base_stat": 150 }
+    ],
+    "past_stats": [],
+    "game_indices": [
+      { "game_index": 386, "version": { "name": "firered" } },
+      { "game_index": 386, "version": { "name": "leafgreen" } },
+      { "game_index": 386, "version": { "name": "x" } },
+      { "game_index": 386, "version": { "name": "y" } }
+    ]
+  },
+  "species": {
+    "id": 386,
+    "name": "deoxys",
+    "names": [
+      { "name": "Deoxys", "language": { "name": "en" } }
+    ],
+    "pokedex_numbers": [
+      { "entry_number": 386, "pokedex": { "name": "national" } },
+      { "entry_number": 386, "pokedex": { "name": "hoenn" } }
+    ]
+  }
+}

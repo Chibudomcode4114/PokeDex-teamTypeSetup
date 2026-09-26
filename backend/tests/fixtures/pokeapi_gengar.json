@@ -1,0 +1,62 @@
+{
+  "pokemon": {
+    "id": 94,
+    "name": "gengar",
+    "is_default": true,
+    "types": [
+      {
+        "slot": 1,
+        "type": { "name": "ghost" }
+      },
+      {
+        "slot": 2,
+        "type": { "name": "poison" }
+      }
+    ],
+    "past_types": [],
+    "abilities": [
+      {
+        "slot": 1,
+        "is_hidden": false,
+        "ability": { "name": "cursed-body" }
+      }
+    ],
+    "past_abilities": [
+      {
+        "generation": { "name": "generation-vi" },
+        "abilities": [
+          {
+            "slot": 1,
+            "is_hidden": false,
+            "ability": { "name": "levitate" }
+          }
+        ]
+      }
+    ],
+    "stats": [
+      { "stat": { "name": "hp" }, "base_stat": 60 },
+      { "stat": { "name": "attack" }, "base_stat": 65 },
+      { "stat": { "name": "defense" }, "base_stat": 60 },
+      { "stat": { "name": "special-attack" }, "base_stat": 130 },
+      { "stat": { "name": "special-defense" }, "base_stat": 75 },
+      { "stat": { "name": "speed" }, "base_stat": 110 }
+    ],
+    "past_stats": [],
+    "game_indices": [
+      { "game_index": 94, "version": { "name": "firered" } },
+      { "game_index": 94, "version": { "name": "leafgreen" } },
+      { "game_index": 94, "version": { "name": "x" } },
+      { "game_index": 94, "version": { "name": "y" } }
+    ]
+  },
+  "species": {
+    "id": 94,
+    "name": "gengar",
+    "names": [
+      { "name": "Gengar", "language": { "name": "en" } }
+    ],
+    "pokedex_numbers": [
+      { "entry_number": 94, "pokedex": { "name": "national" } }
+    ]
+  }
+}

@@ -46,3 +46,11 @@ class PokeApiRateLimitError(PokeApiError):
     def __init__(self, message: str | None = None) -> None:
         msg = message or "PokeAPI rate limit exceeded (HTTP 429)"
         super().__init__(msg, status_code=429)
+
+
+class PokeApiNormalizationError(PokeApiError):
+    """Raised when raw PokeAPI payload is missing required fields or cannot be normalized."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(f"PokeAPI normalization error: {message}")
+

@@ -1,0 +1,123 @@
+{
+  "pokemon": {
+    "id": 35,
+    "name": "clefairy",
+    "is_default": true,
+    "types": [
+      {
+        "slot": 1,
+        "type": {
+          "name": "fairy",
+          "url": "https://pokeapi.co/api/v2/type/18/"
+        }
+      }
+    ],
+    "past_types": [
+      {
+        "generation": {
+          "name": "generation-v",
+          "url": "https://pokeapi.co/api/v2/generation/5/"
+        },
+        "types": [
+          {
+            "slot": 1,
+            "type": {
+              "name": "normal",
+              "url": "https://pokeapi.co/api/v2/type/1/"
+            }
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "slot": 1,
+        "is_hidden": false,
+        "ability": {
+          "name": "cute-charm",
+          "url": "https://pokeapi.co/api/v2/ability/56/"
+        }
+      },
+      {
+        "slot": 2,
+        "is_hidden": false,
+        "ability": {
+          "name": "magic-guard",
+          "url": "https://pokeapi.co/api/v2/ability/98/"
+        }
+      },
+      {
+        "slot": 3,
+        "is_hidden": true,
+        "ability": {
+          "name": "friend-guard",
+          "url": "https://pokeapi.co/api/v2/ability/132/"
+        }
+      }
+    ],
+    "past_abilities": [
+      {
+        "generation": {
+          "name": "generation-iii",
+          "url": "https://pokeapi.co/api/v2/generation/3/"
+        },
+        "abilities": [
+          {
+            "slot": 2,
+            "is_hidden": false,
+            "ability": null
+          }
+        ]
+      },
+      {
+        "generation": {
+          "name": "generation-iv",
+          "url": "https://pokeapi.co/api/v2/generation/4/"
+        },
+        "abilities": [
+          {
+            "slot": 3,
+            "is_hidden": true,
+            "ability": null
+          }
+        ]
+      }
+    ],
+    "stats": [
+      { "stat": { "name": "hp" }, "base_stat": 70 },
+      { "stat": { "name": "attack" }, "base_stat": 45 },
+      { "stat": { "name": "defense" }, "base_stat": 48 },
+      { "stat": { "name": "special-attack" }, "base_stat": 60 },
+      { "stat": { "name": "special-defense" }, "base_stat": 65 },
+      { "stat": { "name": "speed" }, "base_stat": 35 }
+    ],
+    "past_stats": [
+      {
+        "generation": {
+          "name": "generation-i",
+          "url": "https://pokeapi.co/api/v2/generation/1/"
+        },
+        "stats": [
+          { "stat": { "name": "special" }, "base_stat": 60 }
+        ]
+      }
+    ],
+    "game_indices": [
+      { "game_index": 35, "version": { "name": "firered" } },
+      { "game_index": 35, "version": { "name": "leafgreen" } },
+      { "game_index": 35, "version": { "name": "x" } },
+      { "game_index": 35, "version": { "name": "y" } }
+    ]
+  },
+  "species": {
+    "id": 35,
+    "name": "clefairy",
+    "names": [
+      { "name": "Clefairy", "language": { "name": "en" } }
+    ],
+    "pokedex_numbers": [
+      { "entry_number": 35, "pokedex": { "name": "national" } },
+      { "entry_number": 35, "pokedex": { "name": "kanto" } }
+    ]
+  }
+}
