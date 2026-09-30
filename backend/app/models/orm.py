@@ -13,9 +13,7 @@ class Generation(Base):
     """Pokémon generation entity."""
 
     __tablename__ = "generations"
-    __table_args__ = (
-        UniqueConstraint("number", name="uq_generation_number"),
-    )
+    __table_args__ = (UniqueConstraint("number", name="uq_generation_number"),)
 
     id: Mapped[str] = mapped_column(String(32), primary_key=True)
     number: Mapped[int] = mapped_column(Integer, unique=True, index=True, nullable=False)
@@ -146,9 +144,7 @@ class GamePokemon(Base):
     """Game-specific Pokémon availability association."""
 
     __tablename__ = "game_pokemon"
-    __table_args__ = (
-        UniqueConstraint("game_id", "pokemon_id", name="uq_game_pokemon"),
-    )
+    __table_args__ = (UniqueConstraint("game_id", "pokemon_id", name="uq_game_pokemon"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     game_id: Mapped[str] = mapped_column(

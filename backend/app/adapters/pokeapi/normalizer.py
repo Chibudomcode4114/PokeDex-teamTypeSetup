@@ -380,9 +380,7 @@ class PokeApiNormalizer:
 
         # Generation III mechanic constraint: Hidden Abilities were introduced in Gen V
         if target_generation == 3:
-            abilities_by_slot = {
-                s: a for s, a in abilities_by_slot.items() if not a["is_hidden"]
-            }
+            abilities_by_slot = {s: a for s, a in abilities_by_slot.items() if not a["is_hidden"]}
 
         sorted_abilities = [
             NormalizedAbilityAssignment(

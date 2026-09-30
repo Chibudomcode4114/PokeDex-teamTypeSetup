@@ -117,29 +117,17 @@ class TestCrossGenerationTypeMatchups:
         chart = TypeChartVersion.GEN_6_PLUS
 
         # Fairy attacking
-        assert matchup_engine.calculate_matchup(
-            PokemonType.FAIRY, PokemonType.DRAGON, chart
-        ) == 2.0
-        assert matchup_engine.calculate_matchup(
-            PokemonType.FAIRY, PokemonType.STEEL, chart
-        ) == 0.5
-        assert matchup_engine.calculate_matchup(
-            PokemonType.FAIRY, PokemonType.FIRE, chart
-        ) == 0.5
+        assert matchup_engine.calculate_matchup(PokemonType.FAIRY, PokemonType.DRAGON, chart) == 2.0
+        assert matchup_engine.calculate_matchup(PokemonType.FAIRY, PokemonType.STEEL, chart) == 0.5
+        assert matchup_engine.calculate_matchup(PokemonType.FAIRY, PokemonType.FIRE, chart) == 0.5
 
         # Defending against Fairy
-        assert matchup_engine.calculate_matchup(
-            PokemonType.DRAGON, PokemonType.FAIRY, chart
-        ) == 0.0
-        assert matchup_engine.calculate_matchup(
-            PokemonType.POISON, PokemonType.FAIRY, chart
-        ) == 2.0
-        assert matchup_engine.calculate_matchup(
-            PokemonType.STEEL, PokemonType.FAIRY, chart
-        ) == 2.0
-        assert matchup_engine.calculate_matchup(
-            PokemonType.FIGHTING, PokemonType.FAIRY, chart
-        ) == 0.5
+        assert matchup_engine.calculate_matchup(PokemonType.DRAGON, PokemonType.FAIRY, chart) == 0.0
+        assert matchup_engine.calculate_matchup(PokemonType.POISON, PokemonType.FAIRY, chart) == 2.0
+        assert matchup_engine.calculate_matchup(PokemonType.STEEL, PokemonType.FAIRY, chart) == 2.0
+        assert (
+            matchup_engine.calculate_matchup(PokemonType.FIGHTING, PokemonType.FAIRY, chart) == 0.5
+        )
 
     def test_fairy_is_rejected_for_gen2_to_5(self) -> None:
         """Fairy must be explicitly rejected in GEN_2_TO_5 contexts."""
@@ -165,28 +153,23 @@ class TestTypeMatchupEngineContextAndValidation:
         pokemon_x = rules_engine.resolve("pokemon_x")
 
         # Dark -> Steel in FireRed vs Pokémon X
-        assert matchup_engine.calculate_matchup(
-            PokemonType.DARK, PokemonType.STEEL, firered
-        ) == 0.5
-        assert matchup_engine.calculate_matchup(
-            PokemonType.DARK, PokemonType.STEEL, pokemon_x
-        ) == 1.0
+        assert matchup_engine.calculate_matchup(PokemonType.DARK, PokemonType.STEEL, firered) == 0.5
+        assert (
+            matchup_engine.calculate_matchup(PokemonType.DARK, PokemonType.STEEL, pokemon_x) == 1.0
+        )
 
         # Fairy in Pokémon X works, in FireRed fails
-        assert matchup_engine.calculate_matchup(
-            PokemonType.POISON, PokemonType.FAIRY, pokemon_x
-        ) == 2.0
+        assert (
+            matchup_engine.calculate_matchup(PokemonType.POISON, PokemonType.FAIRY, pokemon_x)
+            == 2.0
+        )
         with pytest.raises(UnsupportedTypeError):
-            matchup_engine.calculate_matchup(
-                PokemonType.POISON, PokemonType.FAIRY, firered
-            )
+            matchup_engine.calculate_matchup(PokemonType.POISON, PokemonType.FAIRY, firered)
 
     def test_string_inputs_and_case_insensitivity(self) -> None:
         """Verify string types and casing work cleanly."""
         assert matchup_engine.calculate_matchup("WATER", "FIRE", "gen6_plus") == 2.0
-        assert matchup_engine.calculate_matchup(
-            "rock", ["fire", "flying"], "gen6_plus"
-        ) == 4.0
+        assert matchup_engine.calculate_matchup("rock", ["fire", "flying"], "gen6_plus") == 4.0
 
     def test_duplicate_defending_type_deduplicated(self) -> None:
         """Passing pure type twice (e.g. Water/Water) does not square the multiplier."""
@@ -200,9 +183,7 @@ class TestTypeMatchupEngineContextAndValidation:
     def test_empty_defending_types_raises_error(self) -> None:
         """Empty defending types must raise InvalidTypeMatchupError."""
         with pytest.raises(InvalidTypeMatchupError):
-            matchup_engine.calculate_matchup(
-                PokemonType.WATER, (), TypeChartVersion.GEN_6_PLUS
-            )
+            matchup_engine.calculate_matchup(PokemonType.WATER, (), TypeChartVersion.GEN_6_PLUS)
 
     def test_more_than_two_defending_types_raises_error(self) -> None:
         """More than two defending types must raise InvalidTypeMatchupError."""
@@ -238,6 +219,9 @@ class TestTypeMatchupEngineContextAndValidation:
     def test_engine_isolation(self) -> None:
         """Verify TypeMatchupEngine can be instantiated in total isolation."""
         engine = TypeMatchupEngine()
-        assert engine.calculate_single_matchup(
-            PokemonType.WATER, PokemonType.FIRE, TypeChartVersion.GEN_6_PLUS
-        ) == 2.0
+        assert (
+            engine.calculate_single_matchup(
+                PokemonType.WATER, PokemonType.FIRE, TypeChartVersion.GEN_6_PLUS
+            )
+            == 2.0
+        )

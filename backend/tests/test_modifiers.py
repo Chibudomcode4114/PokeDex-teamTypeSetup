@@ -36,9 +36,7 @@ class TestAbilityModifiers:
     def test_levitate_ground_neutral_negated(self) -> None:
         """Levitate turns a 1.0x Ground neutral interaction into 0.0x immunity."""
         profile = rules_engine.resolve("pokemon_x")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.GROUND, PokemonType.NORMAL, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.GROUND, PokemonType.NORMAL, profile)
         assert base.multiplier == 1.0
 
         modified = modifier_pipeline.apply(base, profile, ability="levitate")
@@ -64,9 +62,7 @@ class TestAbilityModifiers:
         """Flash Fire turns Fire attacks into 0.0x immunity."""
         profile = rules_engine.resolve("firered")
         # Grass defender normally weak to Fire (2.0x)
-        base = matchup_engine.get_matchup_result(
-            PokemonType.FIRE, PokemonType.GRASS, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.FIRE, PokemonType.GRASS, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="Flash Fire")
@@ -77,9 +73,7 @@ class TestAbilityModifiers:
     def test_flash_fire_unrelated_attack_unchanged(self) -> None:
         """Non-Fire attacks are unaffected by Flash Fire."""
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.WATER, PokemonType.FIRE, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.WATER, PokemonType.FIRE, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="flash-fire")
@@ -90,9 +84,7 @@ class TestAbilityModifiers:
     def test_water_absorb_negates_water(self) -> None:
         """Water Absorb turns Water attacks into 0.0x immunity."""
         profile = rules_engine.resolve("pokemon_x")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.WATER, PokemonType.GROUND, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.WATER, PokemonType.GROUND, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="Water Absorb")
@@ -103,9 +95,7 @@ class TestAbilityModifiers:
     def test_volt_absorb_negates_electric(self) -> None:
         """Volt Absorb turns Electric attacks into 0.0x immunity."""
         profile = rules_engine.resolve("pokemon_x")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.ELECTRIC, PokemonType.WATER, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.ELECTRIC, PokemonType.WATER, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="volt-absorb")
@@ -116,9 +106,7 @@ class TestAbilityModifiers:
     def test_thick_fat_fire_weakness_halved(self) -> None:
         """Thick Fat halves 2.0x Fire weakness to 1.0x."""
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.FIRE, PokemonType.GRASS, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.FIRE, PokemonType.GRASS, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="Thick Fat")
@@ -129,9 +117,7 @@ class TestAbilityModifiers:
     def test_thick_fat_fire_neutral_halved(self) -> None:
         """Thick Fat halves 1.0x Fire neutral to 0.5x."""
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.FIRE, PokemonType.NORMAL, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.FIRE, PokemonType.NORMAL, profile)
         assert base.multiplier == 1.0
 
         modified = modifier_pipeline.apply(base, profile, ability="thick_fat")
@@ -154,9 +140,7 @@ class TestAbilityModifiers:
     def test_thick_fat_unrelated_attack_unchanged(self) -> None:
         """Thick Fat has no effect on Fighting or other non-Fire/Ice attacks."""
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.FIGHTING, PokemonType.NORMAL, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.FIGHTING, PokemonType.NORMAL, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="Thick Fat")
@@ -171,9 +155,7 @@ class TestPipelineEdgeCasesAndPurity:
     def test_no_ability_leaves_multiplier_unchanged(self) -> None:
         """Supplying None or empty string leaves base multiplier unaltered."""
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.WATER, PokemonType.FIRE, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.WATER, PokemonType.FIRE, profile)
         assert base.multiplier == 2.0
 
         modified_none = modifier_pipeline.apply(base, profile, ability=None)
@@ -187,9 +169,7 @@ class TestPipelineEdgeCasesAndPurity:
     def test_unimplemented_ability_leaves_multiplier_unchanged(self) -> None:
         """Abilities with no defensive modifier (e.g. Intimidate) leave result unchanged."""
         profile = rules_engine.resolve("pokemon_x")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.GROUND, PokemonType.FIRE, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.GROUND, PokemonType.FIRE, profile)
         assert base.multiplier == 2.0
 
         modified = modifier_pipeline.apply(base, profile, ability="Intimidate")
@@ -218,9 +198,7 @@ class TestPipelineEdgeCasesAndPurity:
         firered = rules_engine.resolve("firered")
         pokemon_x = rules_engine.resolve("pokemon_x")
 
-        base_fr = matchup_engine.get_matchup_result(
-            PokemonType.GROUND, PokemonType.POISON, firered
-        )
+        base_fr = matchup_engine.get_matchup_result(PokemonType.GROUND, PokemonType.POISON, firered)
         base_x = matchup_engine.get_matchup_result(
             PokemonType.GROUND, PokemonType.POISON, pokemon_x
         )
@@ -255,9 +233,7 @@ class TestPipelineEdgeCasesAndPurity:
             chart_version=TypeChartVersion.GEN_1,
         )
 
-        modified = modifier_pipeline.apply(
-            base, no_ability_profile, ability="Levitate"
-        )
+        modified = modifier_pipeline.apply(base, no_ability_profile, ability="Levitate")
         assert modified.final_multiplier == 2.0
         assert len(modified.applied_modifiers) == 0
 
@@ -265,9 +241,7 @@ class TestPipelineEdgeCasesAndPurity:
         """Verify pipeline can be configured with an arbitrary subset of modifiers."""
         custom_pipeline = DefensiveModifierPipeline(modifiers=[])
         profile = rules_engine.resolve("firered")
-        base = matchup_engine.get_matchup_result(
-            PokemonType.GROUND, PokemonType.FIRE, profile
-        )
+        base = matchup_engine.get_matchup_result(PokemonType.GROUND, PokemonType.FIRE, profile)
 
         # Empty pipeline applies nothing
         modified = custom_pipeline.apply(base, profile, ability="Levitate")

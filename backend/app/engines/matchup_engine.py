@@ -44,9 +44,7 @@ def _resolve_chart_version(
         try:
             return TypeChartVersion(cleaned)
         except ValueError:
-            raise UnsupportedTypeError(
-                f"Unsupported type chart version: '{context}'."
-            ) from None
+            raise UnsupportedTypeError(f"Unsupported type chart version: '{context}'.") from None
     raise UnsupportedTypeError(f"Invalid chart context: {type(context).__name__}.")
 
 
@@ -128,9 +126,7 @@ class TypeMatchupEngine:
 
         multiplier = 1.0
         for defender in unique_defenders:
-            single_mult = self.calculate_single_matchup(
-                attacking_type, defender, chart_context
-            )
+            single_mult = self.calculate_single_matchup(attacking_type, defender, chart_context)
             multiplier *= single_mult
             # Short-circuit on immunity
             if multiplier == 0.0:

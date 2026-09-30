@@ -176,17 +176,19 @@ class TestDatabaseSchema:
             type_id="fairy",
             slot=1,
         )
-        db_session.add_all([
-            gen3,
-            gen6,
-            firered,
-            pokemon_x,
-            normal_type,
-            fairy_type,
-            clefairy,
-            clefairy_fr,
-            clefairy_x,
-        ])
+        db_session.add_all(
+            [
+                gen3,
+                gen6,
+                firered,
+                pokemon_x,
+                normal_type,
+                fairy_type,
+                clefairy,
+                clefairy_fr,
+                clefairy_x,
+            ]
+        )
         db_session.flush()
 
         fetched = db_session.get(Pokemon, "clefairy")
@@ -301,17 +303,19 @@ class TestDatabaseSchema:
             ability_id="cursed-body",
             is_hidden=False,
         )
-        db_session.add_all([
-            gen3,
-            gen7,
-            firered,
-            sun,
-            levitate,
-            cursed_body,
-            gengar,
-            gengar_fr,
-            gengar_sun,
-        ])
+        db_session.add_all(
+            [
+                gen3,
+                gen7,
+                firered,
+                sun,
+                levitate,
+                cursed_body,
+                gengar,
+                gengar_fr,
+                gengar_sun,
+            ]
+        )
         db_session.flush()
 
         fetched = db_session.get(Pokemon, "gengar")

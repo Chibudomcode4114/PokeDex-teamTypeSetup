@@ -286,9 +286,7 @@ class TestPokeApiNormalizer:
 
         # 4. Malformed past_types generation
         malformed_past_types = dict(clef_data["pokemon"])
-        malformed_past_types["past_types"] = [
-            {"generation": "not-a-valid-gen", "types": []}
-        ]
+        malformed_past_types["past_types"] = [{"generation": "not-a-valid-gen", "types": []}]
         with pytest.raises(PokeApiNormalizationError, match="Malformed generation reference"):
             PokeApiNormalizer.normalize_pokemon(
                 pokemon_payload=malformed_past_types,

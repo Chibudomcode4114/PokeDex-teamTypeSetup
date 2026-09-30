@@ -45,7 +45,7 @@ def db_session() -> Generator[Session]:
     """Provide an isolated database session per test function."""
     connection = test_engine.connect()
     transaction = connection.begin()
-    session = TestingSessionLocal(bind=connection)
+    session = TestingSessionLocal(bind=connection, join_transaction_mode="create_savepoint")
 
     yield session
 
