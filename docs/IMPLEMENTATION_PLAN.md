@@ -330,9 +330,18 @@ gantt
   - `backend/tests/test_modifiers.py`: 17 unit tests verifying all 5 ability modifiers, pipeline chaining, immutability, and GameRuleProfile context gating.
 
 
-### Milestone 2: PokeAPI Ingestion Adapter & Normalized Database Layer
-- [ ] **Task 2.1: Relational Schema Definition**
-  - Implement SQLAlchemy models:
+### Milestone 2: PokeAPI Ingestion Adapter & Normalized Database Layer [COMPLETED]
+
+> **Milestone 2 Completion Status:**
+> - **Relational Schema** implemented (`backend/app/models/orm.py`) with 11 tables. Game-dependent entities (`pokemon_types`, `pokemon_abilities`, `base_stats`) enforce explicit `game_id` foreign keys referencing `games.id`.
+> - **Isolated Asynchronous PokeAPI Client** implemented (`backend/app/adapters/pokeapi/client.py`) with persistent disk caching, transient retry logic (5xx/429/transport), and zero ORM/database coupling.
+> - **Game-Aware Pure PokeAPI Normalizer** implemented (`backend/app/adapters/pokeapi/normalizer.py`) resolving historical type changes (e.g., Clefairy Gen 3 Normal vs Gen 6 Fairy), base stat updates (e.g., Pidgeot Speed 91 vs 101), ability evolution (e.g., Gengar Levitate), and form identity preservation (e.g., Deoxys Attack National Dex 386).
+> - **Deterministic Ingestion & Persistence Layer** implemented (`backend/app/services/ingestion_service.py`) supporting transactional savepoints, idempotent re-ingestion, stale data reconciliation, and shared reference deduplication (`types`, `abilities`).
+> - **Executable Seed Runner** implemented (`backend/app/db/seed_runner.py`).
+> - **102 automated tests** currently passing (`pytest -v`) with 0 external network dependencies and 0 linter violations (`ruff check .`).
+
+- [x] **Task 2.1: Relational Schema Definition**
+  - Implement SQLAlchemy models with explicit `game_id` foreign keys:
     - `generations` (`id`, `number`, `name`)
     - `games` (`id`, `title`, `generation_id`, `version_group`, `is_supported`)
     - `game_rule_profiles` (`game_id`, `type_chart_version`, `has_fairy_type`, `steel_resists_dark_ghost`)
@@ -340,19 +349,25 @@ gantt
     - `type_chart_entries` (`chart_version`, `attacker_type_id`, `defender_type_id`, `multiplier`)
     - `pokemon` (`id`, `dex_number`, `name`, `species_name`, `form_name`)
     - `game_pokemon` (`game_id`, `pokemon_id`, `is_available`)
-    - `pokemon_types` (`pokemon_id`, `game_id_or_version_group`, `type_id`, `slot`)
+    - `pokemon_types` (`pokemon_id`, `game_id`, `type_id`, `slot`)
     - `abilities` (`id`, `name`)
-    - `pokemon_abilities` (`pokemon_id`, `game_id_or_version_group`, `ability_id`, `is_hidden`)
-    - `base_stats` (`pokemon_id`, `game_id_or_version_group`, `hp`, `atk`, `def`, `spa`, `spd`, `spe`)
-- [ ] **Task 2.2: PokeAPI Client & Adapter**
+    - `pokemon_abilities` (`pokemon_id`, `game_id`, `ability_id`, `is_hidden`)
+    - `base_stats` (`pokemon_id`, `game_id`, `hp`, `atk`, `def`, `spa`, `spd`, `spe`)
+- [x] **Task 2.2: PokeAPI Client & Adapter**
   - Build `backend/app/adapters/pokeapi/client.py`:
     - Async HTTP client with retry and local JSON disk caching.
     - Endpoints consumed: `/pokemon/{id}`, `/pokemon-species/{id}`, `/generation/{id}`, `/version-group/{id}`.
-- [ ] **Task 2.3: Data Normalization Service**
+- [x] **Task 2.3: Data Normalization Service**
   - Build `backend/app/adapters/pokeapi/normalizer.py`:
-    - Normalizes raw PokeAPI JSON into internal SQLAlchemy ORM entities.
+    - Normalizes raw PokeAPI JSON into internal domain dataclasses (`NormalizedPokemon`).
     - Resolves game availability for FireRed/LeafGreen and X/Y based on PokeAPI `game_indices` and `version_group_details`.
-- [ ] **Task 2.4: Deterministic Fallback & Test Fixtures**
+- [x] **Task 2.4: Deterministic Fallback, Ingestion & Test Fixtures**
+  - Persistence pipeline:
+    ```
+    PokeApiClient -> raw JSON
+    PokeApiNormalizer -> NormalizedPokemon
+    IngestionService -> SQLAlchemy ORM -> Database
+    ```
   - Create curated JSON test fixtures in `backend/tests/fixtures/` for offline unit testing and development seed fallback.
 
 ### Milestone 3: Pokémon Catalog Service & Game Context API
