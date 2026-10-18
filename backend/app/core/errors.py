@@ -55,3 +55,28 @@ class InvalidTypeMatchupError(AppError):
 
     def __init__(self, message: str) -> None:
         super().__init__(message, status_code=400)
+
+
+class TeamValidationError(AppError):
+    """Base exception for team validation failures."""
+
+    def __init__(self, message: str, status_code: int = 400) -> None:
+        super().__init__(message, status_code=status_code)
+
+
+class InvalidTeamSizeError(TeamValidationError):
+    """Raised when a team has fewer than 1 or more than 6 Pokémon."""
+
+    pass
+
+
+class DuplicateTeamMemberError(TeamValidationError):
+    """Raised when duplicate Pokémon identifiers exist within a team."""
+
+    pass
+
+
+class InvalidAnchorError(TeamValidationError):
+    """Raised when an anchor Pokémon is not part of the selected team."""
+
+    pass

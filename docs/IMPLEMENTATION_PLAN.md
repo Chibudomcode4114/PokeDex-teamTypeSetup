@@ -390,10 +390,17 @@ gantt
   - Validated all error handling contracts and created repeatable verification runner (`backend/scripts/verify_m3c.py`).
 
 ### Milestone 4: Team Builder, Defensive Analysis & STAB Type Coverage
-- [ ] **Task 4.1: Team Domain Models & Session State**
-  - Implement `TeamMember` (`pokemon_id`, `slot`, `is_anchor`, `chosen_ability_id`).
-  - Implement `Team` (`id`, `game_id`, `members`: max 6).
-- [ ] **Task 4.2: Team Defensive Analysis**
+- [x] **Task 4.1: Team Domain Models and Validation (M4A)**
+  - Implemented immutable domain models in `backend/app/models/team.py`: `Team` (defensive copying of roster sequence), `ValidatedTeamMember` (available abilities metadata preserved without assuming active selection, elemental types, base stats), and `ValidatedTeam`.
+  - Implemented `TeamValidationService` (`backend/app/services/team_service.py`):
+    - Team size validation ($1 \le N \le 6$ members, raising `InvalidTeamSizeError`).
+    - Duplicate prevention rejecting duplicate Pokémon identifiers case-insensitively (`DuplicateTeamMemberError`) while permitting distinct forms.
+    - Anchor validation verifying optional anchor is a member of the team (`InvalidAnchorError`).
+    - Game context isolation and rules resolution via `GameCatalogService` / `GameRulesEngine`.
+    - Detailed catalog lookup via `PokemonCatalogService.get_pokemon_details` (`PokemonNotFoundError`, `PokemonUnavailableInGameError`).
+  - Added domain exceptions to `backend/app/core/errors.py`.
+  - 23 unit and integration tests passing (`backend/tests/test_team_validation.py`). Full suite: 172 tests passing.
+- [ ] **Task 4.2: Team Defensive Analysis (M4B)**
   - Calculate 6 members $\times$ $N$ attacking types matrix (using pure matchup + defensive modifier pipeline).
   - Weakness Detector: flag types where count(multiplier $> 1.0$) $\ge 2$.
   - Resistance Summary: count immunities ($0.0\times$) and resistances ($0.5\times, 0.25\times$).
