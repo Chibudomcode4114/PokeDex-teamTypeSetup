@@ -400,11 +400,20 @@ gantt
     - Detailed catalog lookup via `PokemonCatalogService.get_pokemon_details` (`PokemonNotFoundError`, `PokemonUnavailableInGameError`).
   - Added domain exceptions to `backend/app/core/errors.py`.
   - 23 unit and integration tests passing (`backend/tests/test_team_validation.py`). Full suite: 172 tests passing.
-- [ ] **Task 4.2: Team Defensive Analysis (M4B)**
-  - Calculate 6 members $\times$ $N$ attacking types matrix (using pure matchup + defensive modifier pipeline).
-  - Weakness Detector: flag types where count(multiplier $> 1.0$) $\ge 2$.
-  - Resistance Summary: count immunities ($0.0\times$) and resistances ($0.5\times, 0.25\times$).
-  - Gaps: flag attacking types with zero resistors or immunities on the team.
+- [x] **Task 4.2: Team Defensive Analysis Engine (M4B)**
+  - Implemented immutable defensive analysis models in `backend/app/models/team_analysis.py`:
+    - `DefensiveClassification` enum (`IMMUNE`, `RESISTANT`, `NEUTRAL`, `WEAK`) with `classify_multiplier`.
+    - `MemberDefensiveMatchup`: per-member multiplier and classification.
+    - `SharedWeaknessMember` and `SharedWeakness`: detailed affected members (ID, slot, multiplier) for types weak on $\ge 2$ members.
+    - `TypeDefenseAnalysis`: team-wide counts (`weak_count`, `neutral_count`, `resistant_count`, `immune_count`), `is_shared_weakness`, and convenience properties.
+    - `TeamDefensiveAnalysis`: top-level result with `analysis_mode="type_only"`, canonical game ID, generational type chart version, ordered type matchups, shared weaknesses, and helper accessors.
+  - Implemented `TeamAnalysisEngine` (`backend/app/engines/team_analysis_engine.py`):
+    - Strict structural consistency validation (1-6 members, sequential slots 1..N, duplicate ID rejection, game type support validation).
+    - Game rule profile resolution via `GameRulesEngine` (17 types for Gen 3, 18 types for Gen 6).
+    - Pure type-only calculation via `TypeMatchupEngine.calculate_matchup` with zero ability inference or activation.
+    - Shared weakness detection ($\ge 2$ weak members; guaranteed empty for 1-member teams).
+    - Re-exported in `backend/app/engines/__init__.py`.
+  - Added 26 unit and integration tests in `backend/tests/test_team_analysis.py`. Full suite: 198 tests passing (100% clean).
 - [ ] **Task 4.3: STAB Type Coverage Engine**
   - Calculate union of all primary and secondary types on the team.
   - Determine which attacking types the team can hit super-effectively via STAB.
