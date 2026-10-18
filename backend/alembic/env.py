@@ -1,3 +1,4 @@
+import os
 import sys
 from logging.config import fileConfig
 from pathlib import Path
@@ -16,8 +17,16 @@ from app.db.base import Base  # noqa: E402
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override sqlalchemy.url with the app setting
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Resolve effective database URL: env var > config option > settings.DATABASE_URL
+configured_url = config.get_main_option("sqlalchemy.url")
+db_url = os.environ.get("DATABASE_URL")
+if not db_url:
+    if configured_url and "driver://user:pass" not in configured_url:
+        db_url = configured_url
+    else:
+        db_url = settings.DATABASE_URL
+
+config.set_main_option("sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
 if config.config_file_name is not None:
@@ -52,7 +61,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
     """
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = settings.DATABASE_URL
+    configuration["sqlalchemy.url"] = config.get_main_option("sqlalchemy.url")
 
     connectable = engine_from_config(
         configuration,

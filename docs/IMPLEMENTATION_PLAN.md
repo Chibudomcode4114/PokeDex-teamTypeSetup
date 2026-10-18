@@ -371,18 +371,23 @@ gantt
   - Create curated JSON test fixtures in `backend/tests/fixtures/` for offline unit testing and development seed fallback.
 
 ### Milestone 3: Pokémon Catalog Service & Game Context API
-- [ ] **Task 3.1: Pokémon Catalog Service**
-  - Implement `get_games() -> list[Game]`.
-  - Implement `search_pokemon(game_id: str, query: str, type_filter: str | None) -> list[PokemonSummary]`.
-  - Implement `get_pokemon_details(game_id: str, pokemon_id: str) -> PokemonDetail` with game-accurate types, abilities, and base stats.
-- [ ] **Task 3.2: FastAPI Endpoints**
-  - `GET /api/v1/games`: List supported games.
+- [x] **Task 3.1: Pokémon Catalog Service (M3A)**
+  - Implemented `GameCatalogService` (`get_games`, `get_game`, `get_game_rule_profile`).
+  - Implemented `PokemonCatalogService` (`search_pokemon`, `get_pokemon_details`, pagination validation).
+  - Game-filtered querying with strict context enforcement, deterministic sorting, and N+1 query elimination.
+- [x] **Task 3.2: FastAPI Endpoints (M3B)**
+  - `GET /api/v1/games`: List supported games in deterministic order.
   - `GET /api/v1/games/{game_id}/rules`: Return resolved rule profile.
-  - `GET /api/v1/pokemon?game_id={id}&search={q}`: Game-filtered search.
-  - `GET /api/v1/pokemon/{pokemon_id}?game_id={id}`: Detail retrieval.
-- [ ] **Task 3.3: API Integration Tests**
-  - Verify that `Sylveon` returns 404/Empty in `game_id=firered`, but succeeds in `game_id=pokemon_x`.
-  - Verify `Clefairy` returns `Normal` in `firered` and `Fairy` in `pokemon_x`.
+  - `GET /api/v1/pokemon?game_id={id}&search={q}&type_filter={type}&limit={n}&offset={n}`: Game-filtered search with canonical parameter, alias resolution, and type validation.
+  - `GET /api/v1/pokemon/{pokemon_id}?game_id={id}`: Game-accurate detail retrieval with Pydantic serialization (`def_` as `def`).
+  - Domain error mapping: HTTP 400 (`GameNotFoundError`, `UnsupportedTypeError`), HTTP 422 (`InvalidPaginationError`, missing params), HTTP 404 (`PokemonNotFoundError`, `PokemonUnavailableInGameError`).
+- [x] **Task 3.3: End-to-End Catalog Verification & Smoke Tests (M3C)**
+  - Verified fresh disposable SQLite database initialization using Alembic migrations.
+  - Seeded canonical game contexts and validated 4 MVP games exist (`firered`, `leafgreen`, `pokemon-x`, `pokemon-y`).
+  - Executed unseeded catalog smoke tests (returns `[]` empty list cleanly).
+  - Verified complete pipeline with offline fixtures: Normalizer $\to$ IngestionService $\to$ Database $\to$ Catalog Service $\to$ FastAPI response.
+  - Validated cross-game typing divergence (Clefairy Normal in FireRed vs Fairy in Pokémon X) and stat divergence (Pidgeot Spe 91 in FireRed vs 101 in Pokémon X).
+  - Validated all error handling contracts and created repeatable verification runner (`backend/scripts/verify_m3c.py`).
 
 ### Milestone 4: Team Builder, Defensive Analysis & STAB Type Coverage
 - [ ] **Task 4.1: Team Domain Models & Session State**
