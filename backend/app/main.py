@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import settings
-from app.core.errors import AppError
+from app.core.errors import AppError, GameNotFoundError, InvalidPaginationError
 
 
 @asynccontextmanager
@@ -36,6 +36,24 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+
+@app.exception_handler(GameNotFoundError)
+async def game_not_found_handler(request: Request, exc: GameNotFoundError) -> JSONResponse:
+    """Handle unknown or unsupported game requests with HTTP 400."""
+    return JSONResponse(
+        status_code=400,
+        content={"error": exc.message, "detail": exc.message},
+    )
+
+
+@app.exception_handler(InvalidPaginationError)
+async def invalid_pagination_handler(request: Request, exc: InvalidPaginationError) -> JSONResponse:
+    """Handle invalid pagination parameters with HTTP 422."""
+    return JSONResponse(
+        status_code=422,
+        content={"error": exc.message, "detail": exc.message},
+    )
 
 
 @app.exception_handler(AppError)
